@@ -1,22 +1,5 @@
 const feathers = require('@feathersjs/feathers');
-const express = require('@feathersjs/express');
-const socketio = require('@feathersjs/socketio');
-const app = express(feathers());
-
-// Parse HTTP JSON bodies
-app.use(express.json());
-// Parse URL-encoded params
-app.use(express.urlencoded({ extended: true }));
-// Host static files from the current folder
-app.use(express.static(__dirname));
-app.use(express.errorHandler());
-
-// Add REST API support
-app.configure(express.rest());
-// Configure Socket.io real-time APIs
-app.configure(socketio())
-
-
+const app = feathers();
 
 function Service() {
     let self 
@@ -63,18 +46,13 @@ function Service() {
 //       return message;
 //     }
 //   }
-app.use('/messages',  new Service())
-
-app.on('connection', connection => app.channel('eveybody').join(connection))
-app.publish(data => app.channel('eveybody'))
-
-
+app.use('messages',  new Service())
 
 //log everytime the message service is created:
 
-// app.service('messages').on('created', message => {
-//     console.log('A new message has been created', message)
-// })
+app.service('messages').on('created', message => {
+    console.log('A new message has been created', message)
+})
 
 // func that creates new message and then logs 
 // all exisiting messages
